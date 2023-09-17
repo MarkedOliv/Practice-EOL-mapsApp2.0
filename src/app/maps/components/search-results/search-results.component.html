@@ -1,17 +1,20 @@
-<div class="alert alert-primary mt-2 text-center">
+<div *ngIf="isLoadingPlaces" class="alert alert-primary mt-2 text-center">
   <h6>Cargando</h6>
   <span>Espere por favor...</span>
 </div>
 
-<ul class="list-group mt-2">
-  <li class="list-group-item list-group-item-action pointer">
-    <h6>Lugar</h6>
+<ul *ngIf="places.length > 0" class="list-group mt-2">
+  <li
+    *ngFor="let place of places"
+    [class.active]="place.id === selectedId"
+    class="list-group-item list-group-item-action pointer active"
+  >
+    <h6>{{ place.text_es }}</h6>
     <p>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae,
-      praesentium! Non nesciunt in nostrum! Quibusdam, placeat quod. Repellat
-      magni assumenda maiores, quos eveniet quia, incidunt tempora amet culpa,
-      voluptas eum.
+      {{ place.place_name }}
     </p>
-    <button class="btn btn-sm btn-outline-primary">Direcciones</button>
+    <button (click)="flyTo(place)" class="btn btn-sm" [ngClass]="(place.id === selectedId) ? 'btn-outline-light': 'btn-outline-primary'">
+      Direcciones
+    </button>
   </li>
 </ul>

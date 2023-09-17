@@ -1,10 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+
+import { PlacesApiClient } from '../api/placesApiClient';
+
+import { environment } from 'src/environments/environments';
+
+import { Feature, PlacesResponse } from '../interfaces/places.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlacesService {
+  private placesApi = inject(PlacesApiClient);
+
   public userLocation?: [number, number];
+
+  public isLoadingPlaces: boolean = false;
+  public places: Feature[] = [];
 
   get isUserLocationReady(): boolean {
     return !!this.userLocation;
@@ -27,5 +38,27 @@ export class PlacesService {
         }
       );
     });
+  }
+
+  getPlacesByQuery(query: string = '') {
+    if (query.length === 0) {
+      this.places = [];
+      this.isLoadingPlaces = false;
+      return;
+    }
+    if (!this.userLocation) throw Error('No hay localización de usuario');
+
+    this.isLoadingPlaces = true;
+
+    this.placesApi
+      .get<PlacesResponse>(`/${query}.json`, {
+        params: {
+          proximity: this.userLocation.join(','),
+        },
+      })
+      .subscribe((response) => {
+        this.isLoadingPlaces = false;
+        this.places = response.features;
+      });
   }
 }

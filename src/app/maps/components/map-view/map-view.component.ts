@@ -24,7 +24,6 @@ export class MapViewComponent implements AfterViewInit {
   private mapService = inject(MapService);
 
   ngAfterViewInit(): void {
-    console.log(this.placesService.userLocation);
 
     if (!this.placesService.userLocation)
       throw new Error('No hay localización');
