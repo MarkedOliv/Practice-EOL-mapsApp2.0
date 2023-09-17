@@ -7,9 +7,9 @@ import {
   inject,
 } from '@angular/core';
 
-import { PlacesService } from '../../services';
+import { MapService, PlacesService } from '../../services';
 
-import { Map } from 'mapbox-gl';
+import { Map, Marker, Popup } from 'mapbox-gl';
 
 @Component({
   selector: 'app-map-view',
@@ -21,11 +21,13 @@ export class MapViewComponent implements AfterViewInit {
   public mapDivElement!: ElementRef;
 
   private placesService = inject(PlacesService);
+  private mapService = inject(MapService);
 
   ngAfterViewInit(): void {
     console.log(this.placesService.userLocation);
 
-    if (!this.placesService.userLocation) throw new Error('No hay localización');
+    if (!this.placesService.userLocation)
+      throw new Error('No hay localización');
 
     const map = new Map({
       container: this.mapDivElement.nativeElement,
@@ -33,5 +35,17 @@ export class MapViewComponent implements AfterViewInit {
       center: this.placesService.userLocation,
       zoom: 10,
     });
+
+    const popup = new Popup().setHTML(`
+        <h6>Aquí estoy</h6>
+        <span>Estoy en este lugar del mundo</span>
+      `);
+
+    new Marker({ color: 'red' })
+      .setLngLat(this.placesService.userLocation)
+      .setPopup(popup)
+      .addTo(map);
+
+    this.mapService.setMap(map);
   }
 }
