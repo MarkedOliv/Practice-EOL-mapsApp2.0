@@ -5,12 +5,15 @@ import { PlacesApiClient } from '../api/placesApiClient';
 import { environment } from 'src/environments/environments';
 
 import { Feature, PlacesResponse } from '../interfaces/places.interface';
+import { MapService } from './map.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlacesService {
   private placesApi = inject(PlacesApiClient);
+
+  private mapsService = inject(MapService);
 
   public userLocation?: [number, number];
 
@@ -59,6 +62,11 @@ export class PlacesService {
       .subscribe((response) => {
         this.isLoadingPlaces = false;
         this.places = response.features;
+
+        this.mapsService.createMarkersFromPlaces(
+          this.places,
+          this.userLocation!
+        );
       });
   }
 }
