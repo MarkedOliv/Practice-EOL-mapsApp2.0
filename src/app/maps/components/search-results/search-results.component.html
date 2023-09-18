@@ -6,6 +6,7 @@
 <ul *ngIf="places.length > 0" class="list-group mt-2">
   <li
     *ngFor="let place of places"
+    (click)="flyTo(place)"
     [class.active]="place.id === selectedId"
     class="list-group-item list-group-item-action pointer active"
   >
@@ -13,7 +14,13 @@
     <p>
       {{ place.place_name }}
     </p>
-    <button (click)="flyTo(place)" class="btn btn-sm" [ngClass]="(place.id === selectedId) ? 'btn-outline-light': 'btn-outline-primary'">
+    <button
+      (click)="getDirections(place)"
+      class="btn btn-sm"
+      [ngClass]="
+        place.id === selectedId ? 'btn-outline-light' : 'btn-outline-primary'
+      "
+    >
       Direcciones
     </button>
   </li>
